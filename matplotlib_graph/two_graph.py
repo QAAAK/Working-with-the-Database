@@ -13,7 +13,7 @@ plt.xlabel('x')
 
 plt.grid()
 
-plt.plot(x, y1, x, y2)
+plt.plot(x, y1,'ro',x, y2)
 
 plt.show()
 
