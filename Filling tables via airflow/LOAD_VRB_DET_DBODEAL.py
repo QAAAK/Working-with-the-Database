@@ -5,7 +5,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 
 default_args = {
-    'owner': 'kirsanov-nig', # если не отработает, то 'owner': 'admin'
+    'owner': 'santalov', # если не отработает, то 'owner': 'admin'
     'start_date': days_ago(0),
     'depends_on_past': False
 }
