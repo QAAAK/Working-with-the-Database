@@ -1,0 +1,1 @@
+SELECT object_defintion(odject_id('TEST_TABLE')) AS get_create_table_script
