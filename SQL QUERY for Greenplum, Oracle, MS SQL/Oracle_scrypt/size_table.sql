@@ -1,0 +1,1 @@
+select segment_name, sum(bytes/1024/1024/1024) as sizeGB from dba_segments
