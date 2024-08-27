@@ -15,12 +15,10 @@ def get_user_input():
     return income, expenses
 
 
-
 def calculate_budget(income, expenses):
     total_expenses = sum(expenses.values())
     balance = income - total_expenses
     return total_expenses, balance
-
 
 
 def display_budget_summary(income, total_expenses, balance):
@@ -28,8 +26,7 @@ def display_budget_summary(income, total_expenses, balance):
     print(f"Total Income: ${income}")
     print(f"Total Expenses: ${total_expenses}")
     print(f"Remaining Balance: ${balance}")
-    
-    
+        
 def plot_expenses(expenses):
     df = pd.DataFrame(list(expenses.items()), columns=['Category', 'Amount'])
     df.plot(kind='bar', x='Category', y='Amount', legend=False)
@@ -39,5 +36,4 @@ def plot_expenses(expenses):
     
 
     
-    
-    
+   
