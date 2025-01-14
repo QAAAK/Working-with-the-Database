@@ -1,5 +1,0 @@
-select 'ALTER TABLE stg.'|| table_name || ' ALTER COLUMN ' || column_name || ' DROP NOT NULL;' from information_schema.columns
-
-where table_schema = 'stg'
-
-and is_nullable = 'NO'
