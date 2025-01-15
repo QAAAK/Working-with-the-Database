@@ -1,9 +1,6 @@
 --SQL Server Profiler - program
 
-
-
-SELECT * FROM fn_dblog(NULL,NULL)  -- table
-
+SELECT * FROM fn_dblog(NULL,NULL);  -- table
 
 SELECT  * FROM fn_dump_dblog(NULL,NULL,'DISK',1
 ,'D:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Backup\AdventureWorks2012.bak'
