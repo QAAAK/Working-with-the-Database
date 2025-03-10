@@ -2,18 +2,19 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from datetime import datetime
 
-# Определяем параметры DAG
 default_args = {
-    'owner': 'airflow',
-    'start_date': datetime(2023, 10, 1),  # Укажите дату начала выполнения
+        "email": ["santalovdv@mts.ru"],  # santalovdv
+        "email_on_failure": True,
+        'start_date': "2025-01-10",
+        "ssh_conn_id": "fob2b-en-001.msk.bd-cloud.mts.ru",
 }
 
 # Создаем DAG
 dag = DAG(
     'run_extract_script',
     default_args=default_args,
-    description='DAG to run extract_last_upd.sh every day at 6 AM',
-    schedule_interval='0 6 * * *',  # Запуск в 6 AM каждый день
+    description='Загрузка с FTP-сервера',
+    schedule_interval='0 3 * * *',  # Запуск в 3 утра каждый день 
 )
 
 # Оператор для выполнения bash скрипта
