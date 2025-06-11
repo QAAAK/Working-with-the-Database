@@ -1,4 +1,36 @@
+-- проводим качество данных			
+DO $$
+DECLARE
+	cur refcursor;
+	miss text;
+	prod text;
+BEGIN
 
+open cur for execute 'select product_prod from crm_b2b_sb.prod_equal_vas pev where product_prod not in (select "Target prod" from schema_name.data_quality_for_desc ddfd)';
+		
+	loop 
+		fetch cur into miss;
+		exit when not found;
+		
+		begin
+			select "Target prod"  from schema_name.data_quality_for_desc ddfd2 
+			into prod
+			where lower(mistakes)  like '%' || lower(miss) || '%';
+		
+			if prod is null
+				then
+					select "Target prod"  from schema_name.data_quality_for_desc ddfd2
+					into prod
+					where lower("Target prod") = lower(miss);
+			end if;
+					
+		
+			update schema_name.prod_equal_vas set product_prod = prod
+			where product_prod = miss;
+	  	end;
+	  
+  end loop;
+END $$;
 
 -- агрегируем поля rep_beg, campaign_type, campaign_name_plan
 drop table if exists  aggregate_campaign;
@@ -26,11 +58,12 @@ create temporary table aggregate_campaign
 			
 			end as campaign_name_plan
 		
-		from crm_b2b_sb.active_company 
+		from schema_name.active_company 
 		
 ) with data distributed randomly;
 analyze aggregate_campaign;
 
+--select * from aggregate_campaign
 
 -- добавлено поле product_fix, удалены записи, которые в поле vas
 drop table if exists  product_final;
@@ -50,7 +83,7 @@ create temporary table product_final
 			'VPN', 
 			'SD_WAN' )  THEN product_vas 
 			      END AS product_fix 
-			FROM crm_b2b_sb.prod_equal_vas 
+			FROM schema_name.prod_equal_vas 
 			)
 			
 			select product_prod, case 
@@ -69,21 +102,22 @@ create temporary table product_final
 ) with data distributed randomly;
 analyze product_final;
 
+select * from product_final
 
--- создаем из таблицы crm_b2b_sb.products_branch список продуктов target_prod и target_vas
+-- создаем из таблицы schema_name.products_branch список продуктов target_prod и target_vas
 drop table if exists  aggregate_product;
 create temporary table aggregate_product
                                with (appendonly=true, compresstype=zstd, compresslevel=1)
                                on commit preserve rows
                                as 
       (
-		with t as (select distinct pb.industry, string_agg(distinct pev.product_vas, ', ') as target_vas  from crm_b2b_sb.products_branch pb 
+		with t as (select distinct pb.industry, string_agg(distinct pev.product_vas, ', ') as target_vas  from schema_name.products_branch pb 
 		left join product_final pev on pev.product_prod = pb.product 
 		group by pb.industry),
-		s as (select distinct pb.industry, string_agg(distinct pb.product, ', ') as target_prod  from crm_b2b_sb.products_branch pb 
+		s as (select distinct pb.industry, string_agg(distinct pb.product, ', ') as target_prod  from schema_name.products_branch pb 
 		left join product_final pev on pev.product_prod = pb.product 
 		group by pb.industry),
-		g as (select distinct pb.industry, string_agg(distinct product_fix, ', ') as target_fix from crm_b2b_sb.products_branch pb 
+		g as (select distinct pb.industry, string_agg(distinct product_fix, ', ') as target_fix from schema_name.products_branch pb 
 		left join product_final pev on pev.product_prod = pb.product 
 		group by pb.industry)
 		select distinct a.industry, b.target_prod, a.target_vas, g.target_fix
@@ -92,6 +126,7 @@ create temporary table aggregate_product
 		left join g on g.industry = a.industry
 ) with data distributed randomly;
 analyze aggregate_product;
+
 
 
 -- агрегируем поле type, target_prod, target_vas
@@ -169,7 +204,7 @@ create temporary table aggregate_segment
       (
 			select a.*, ch.segment, 
 				   0 as "Scoring_BigData" from  aggregate_update_channel a
-			left join crm_b2b_sb.segment_channel ch on ch.channel = a.channel 
+			left join schema_name.segment_channel ch on ch.channel = a.channel 
 ) with data distributed randomly;
 analyze aggregate_segment;
 
@@ -191,8 +226,10 @@ create temporary table temp_desc
 analyze temp_desc;
 
 
-truncate table crm_b2b_sb.desc;
+truncate table schema_name.desc;
 
-insert into crm_b2b_sb.desc
+insert into schema_name.desc
 select * from temp_desc;
+
+select * from schema_name.desc
 
