@@ -1,8 +1,8 @@
 from airflow import DAG
 from airflow.utils.dates import days_ago
-from airflow.operators.python import PythonOperator
+#from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
-from airflow.hooks.postgres_hook import PostgresHook
+#from airflow.hooks.postgres_hook import PostgresHook
 
 default_args = {
     'owner': 'santalovdv', # если не отработает, то 'owner': 'admin'
