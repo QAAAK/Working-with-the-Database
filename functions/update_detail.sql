@@ -5,9 +5,7 @@ CREATE OR REPLACE FUNCTION dds.update_detail(month date)
 	LANGUAGE plpgsql
 	VOLATILE
 AS $$
-	
-	
-		
+			
 begin 
 	
 	EXECUTE 'DROP TABLE IF EXISTS temp_detail';
@@ -29,7 +27,6 @@ begin
 return 'passed';
 	
 end;
-
 
 
 $$
