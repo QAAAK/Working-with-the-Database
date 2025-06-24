@@ -11,7 +11,7 @@ secret_hr_gate = Variable.get("secret_hr_gate")
 
 
 default_args = {
-        "email": ["main"],  # 
+        "email": ["main@mail.com"],  # 
         "email_on_failure": True,
         'start_date': "2025-06-23",
         "ssh_conn_id": "oka-analyze-en-001", # сервер, где делает потоки/запросы. в терминале написать hostnamectl
