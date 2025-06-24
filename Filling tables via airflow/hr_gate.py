@@ -58,11 +58,22 @@ def auth_token(**kwargs):
             print("Ошибка:", response.status_code, response.text)
             
             
+def load_data_from_postgres(**kwargs):
+
+    hook = PostgresHook(postgres_conn_id='core_gp')
+    
+    #engine = create_engine(hook.get_uri()) # получить url из Hook
+    
+    kwargs['ti'].xcom_push(key='engine', value=hook.get_uri())
+    
+    
+            
 def pull_function(**kwargs):
     """Пуллим информацию из Xcom"""
-    value = kwargs['ti'].xcom_pull(key='token')
-    print(value)
-
+    value1 = kwargs['ti'].xcom_pull(key='token')
+    
+    value2 = kwargs['ti'].xcom_pull(key='engine')
+    print(f'{value1},\n {value2}')
     
 
 with DAG (
@@ -79,6 +90,13 @@ with DAG (
         provide_context=True, # контекст выполнения задачи
         dag=dag,
     )
+    
+    auth_engine = PythonOperator(
+        task_id='auth_engine',
+        python_callable=load_data_from_postgres,
+        provide_context=True,
+        dag=dag
+    )
 
     pull_task = PythonOperator(
         task_id='pull_task',
@@ -87,5 +105,5 @@ with DAG (
         dag=dag,
     )
 
-auth_token >> pull_task
+[auth_token,auth_engine] >> pull_task
 
