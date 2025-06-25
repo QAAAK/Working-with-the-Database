@@ -137,11 +137,80 @@ with DAG (
         dag=dag
     )
 
-    pull_task = PythonOperator(
-        task_id='load_employee',
-        python_callable=employee_hr_gate,
+    load_employees = PythonOperator(
+        task_id='load_employees',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'employees'},
         provide_context=True, # контекст выполнения задачи
         dag=dag,
     )
+    
+    load_employees_roles = PythonOperator(
+        task_id='load_employees_roles',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'employee-roles'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_assignments = PythonOperator(
+        task_id='load_assignments',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'assignments'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_absence_types = PythonOperator(
+        task_id='load_absence_types',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'absence-types'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_absences = PythonOperator(
+        task_id='load_absences',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'absences'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_timekeepers = PythonOperator(
+        task_id='load_timekeepers',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'timekeepers'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_assignmentstatus = PythonOperator(
+        task_id='load_assignmentstatus',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'assignmentstatus'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_units = PythonOperator(
+        task_id='load_units',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'units'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    load_locations = PythonOperator(
+        task_id='load_locations',
+        python_callable=load_table_hr_gate,
+        op_kwargs={'table_name': 'locations'},
+        provide_context=True, # контекст выполнения задачи
+        dag=dag,
+    )
+    
+    
+    
 
-[auth_token,auth_engine] >> pull_task
+
+auth_token >> auth_engine >> [load_employees,load_employees_roles, load_assignments, load_absences, load_absence_types, load_timekeepers, load_assignmentstatus, load_units, load_locations]
