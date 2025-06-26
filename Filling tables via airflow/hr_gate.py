@@ -113,6 +113,45 @@ def employee_hr_gate(table_name, **kwargs):
 
     # except Exception as e:
     #     print(f"Ошибка при вставке в таблицу", e)
+
+
+def load_table_hr_gate_with_high_dict(table_name, **kwargs):
+
+    conn = create_engine(connect_to_db)
+    
+    headers = {
+    "Content-Type": "application/json",
+     "Authorization": f"Bearer {kwargs['ti'].xcom_pull(key='token')}" }
+    
+    
+    
+    """Пуллим информацию из Xcom"""
+    response = requests.get(f'https://hr-gate.ru/api/v1/{table_name}', headers=headers, verify=False).json()
+
+    flattened_data = []
+    for item in response:
+        flat_item = {}
+        for key, value in item.items():
+            if isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    if isinstance(sub_value, dict):
+                        for sub_sub_key, sub_sub_value in sub_value.items():
+                            flat_item[f"{key}_{sub_key}_{sub_sub_key}"] = sub_sub_value
+                    else:
+                        flat_item[f"{key}_{sub_key}"] = sub_value
+            else:
+                flat_item[key] = value
+        flattened_data.append(flat_item)    
+        
+    import pandas as pd
+    # try:
+    if response:  # Check if response is not None
+        df = pd.DataFrame(flattened_data)
+        if not df.empty:  # Check if DataFrame is not empty
+            df.to_sql(f"hr_gate_{table_name}", con=conn,  if_exists='replace', index=False, schema="a_data_b2b")
+            print(f"passed {table_name}")
+        else:
+            print(f"{table_name} is empty")
     
 
 with DAG (
@@ -171,7 +210,7 @@ with DAG (
     
     load_absences = PythonOperator(
         task_id='load_absences',
-        python_callable=load_table_hr_gate,
+        python_callable=load_table_hr_gate_with_high_dict,
         op_kwargs={'table_name': 'absences'},
         provide_context=True, # контекст выполнения задачи
         dag=dag,
