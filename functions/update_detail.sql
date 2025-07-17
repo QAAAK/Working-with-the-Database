@@ -24,6 +24,8 @@ begin
         SELECT a.*,t.tp_group_big   FROM temp_detail a 
         LEFT JOIN dds.guide_tp_group_big t ON a.tp_group1 = t.tp_group';
 
+    PERFORM dds.update_product_budget_detail(month);
+
 return 'passed';
 	
 end;
