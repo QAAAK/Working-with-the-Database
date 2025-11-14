@@ -32,7 +32,7 @@ def auth_token(**kwargs):
         realm = "mts"
         client_id = "oka-analyze-en-001"
         secret = secret_hr_gate
-        url = "https://isso.ru/auth/realms/mts/protocol/openid-connect/token"
+        url = "https://isso.ru/auth/realms/protocol/openid-connect/token"
 
 
         credentials = "{}:{}".format(client_id, secret)
