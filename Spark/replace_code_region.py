@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import StringType
 
-# Создаем SparkSession
 spark = SparkSession.builder \
     .appName('Phone number conversion') \
     .config('spark.ui.showConsoleProgress', True) \
