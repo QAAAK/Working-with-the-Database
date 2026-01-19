@@ -70,8 +70,8 @@ def get_excel_files():
     return excel_files
 
 def prompt_user_for_file(excel_files):
-    options = "\n".join(f"{i+1}\n. {os.path.abspath(file)}" for i, file in enumerate(excel_files))
-    prompt = f"Выберете номер из списка. После ввода нажмите Enter: \n{options}"
+    options = "\n".join(f"{i+1}. {os.path.abspath(file)}" for i, file in enumerate(excel_files))
+    prompt = f"{options}\nВыберете номер из списка. После ввода нажмите Enter:"
 
     while True:
         response = input(prompt)
